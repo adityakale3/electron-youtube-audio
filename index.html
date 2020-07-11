@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy: sandbox allow-scripts;">
+    <title>Document</title>
+    <style>
+        audio { display:none;}
+    </style>
+</head>
+<body>
+    <center>
+        <h1>Music</h1>
+
+            <p id="online-offline"></p>
+            <p><b onclick="newWin('Playlist')">Previous Playlist</b> | <b>Offline Songs</b></p>
+            <p id="err" style="display: none;"></p>
+            <input type="text" required placeholder="Playlist URL" id="uurrll"/> 
+            <input type="submit" value="Load" onclick="getUrl()"/>
+            <br>
+            <p id="prog"></p> 
+        <h4>Playlist Loaded : <b id="playlistName"></b></h4>
+        <table id="playlistData">
+            <tr>
+                <td>Name</td>
+                <td>Duration</td>
+            </tr>
+        </table>
+
+        <audio controls id="audio">
+            <source id="mp3Source" type="audio/mp3"></source>
+            Your browser does not support the audio tag.
+          </audio> 
+    </center>
+    <script src="index.js"></script>
+</body>
+</html>

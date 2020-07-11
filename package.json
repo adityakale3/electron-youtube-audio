@@ -1,0 +1,23 @@
+{
+  "name": "test1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "electron": "^9.0.5",
+    "fluent-ffmpeg": "^2.1.2",
+    "get-youtube-playlist-id": "0.0.1",
+    "jquery": "^3.5.1",
+    "youtube-playlist-summary": "^2.1.3",
+    "yt-scraper": "^2.0.1",
+    "ytdl-core": "^2.1.7",
+    "ytpl": "^0.1.22"
+  }
+}
