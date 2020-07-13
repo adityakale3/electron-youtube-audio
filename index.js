@@ -1,4 +1,5 @@
 var sanitize = require('sanitize-filename');
+const util = require('util');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -15,6 +16,7 @@ const config = {
   GOOGLE_API_KEY: 'AIzaSyCG0U6iWqloqJr7hcCurpsuGLIKvKAJKmg', // require
   PLAYLIST_ITEM_KEY: ['title', 'videoId', 'videoUrl'], // option
 }
+const readFile = util.promisify(fs.readFile);
 
 // Init Variables
 const ps = new PlaylistSummary(config)
@@ -194,12 +196,12 @@ function getVideoInfo(allData,playlistTitle1){
 
 // If all files match play Music
 function showPlaylist(){
+    $('#playlistData').empty();
     fs.readFile('./download/'+pid+'/'+pid+'.json','utf8', (err,data) => {
         var itemsPro = 0;
         var obj1 = JSON.parse(data);
         showProgress('complete', 'Showing Playlist');
         console.log(obj1.length);
-
         document.getElementById('playlistName').innerHTML = obj1[0].name;
         var plylistContent;
         obj1.forEach((vidInfo,index) => {
@@ -363,24 +365,64 @@ const alertOnlineStatus = () => {
   });
 
   function showOffline(){
-    console.log(getDirectories('./download/'));
+    //console.log(getDirectories('./download/'));
     var playlists = getDirectories('./download/');
-    playlists.forEach((folderName) => {
-    console.log(folderName);
+    var offlineSongs = [];
+    var offlineSong;
+    if(playlists.length === 0){
+        document.getElementById('playlistName').innerHTML = "No Offline Songs";
+    }else{
+        var processedOfflinePlaylist = 0;
+    playlists.forEach((folderName, indexplaylist) => {
+        processedOfflinePlaylist++;
+        var processedOfflineSongs = 0;
     if(fs.existsSync('./download/'+folderName+'/'+folderName+'.json')){
         console.log('Reading File');
-
-        const readFile = util.promisify(fs.readFile);
-        readFile('./download/'+folderName+'/'+folderName+'.json').then((file) => {
-            var obj1 = JSON.parse(file);   
-            $('#showplaylist').append(`<tr onclick="playSong('${obj1[0].playlist}')"><td>${obj1[0].name}</td></tr>`);
+        readFile('./download/'+folderName+'/'+folderName+'.json').then((fileData) => {
+            var obj2 = JSON.parse(fileData);
+            obj2.forEach((song, index) => {
+                processedOfflineSongs++;
+                if(index > 0){
+                    if (fs.existsSync('./download/'+folderName+'/'+song.vid+'.mp3')){
+                        var pathOfSong = `./download/${folderName}/${song.vid}.mp3`;
+                        console.log(pathOfSong);
+                        offlineSong = `{ "vid" : "${song.vid}" , "title" : "${song.title}", "duration" : "${song.time}", "src" : "${pathOfSong}" }`;    
+                        offlineSongs.push(JSON.parse(offlineSong));
+                    } 
+                    if(processedOfflinePlaylist == playlists.length){
+                        console.log(processedOfflinePlaylist, playlists.length);
+                    if(processedOfflineSongs == obj2.length){
+                        console.log(processedOfflineSongs, obj2.length);
+                        showFinalOfflineSongs(offlineSongs);
+                        }
+                    }
+                }
+            })
         })
-
     }else{
         console.log('File Does Not Exists', folderName);
     }
     })
+    }
   }
+
+
+function showFinalOfflineSongs(songsOffline){
+    $('#playlistData').empty();
+    console.log(songsOffline);
+    var plylistContentOffline;
+    songsOffline.forEach((vidOff) => {
+            plylistContentOffline = `<tr ondblclick="playSong('${vidOff.src}')">
+                                        <td>${(vidOff.title).substring(0, 30)}</td>
+                                        <td>${vidOff.duration}</td>
+                                    </tr>`;
+                                    $("#playlistData").append(plylistContentOffline);
+                                   
+                                })
+}
+
+
+
 
 
   // Get all Directories
@@ -389,4 +431,9 @@ const alertOnlineStatus = () => {
     return fs.readdirSync(path).filter(function (file) {
       return fs.statSync(path+'/'+file).isDirectory();
     });
+  }
+
+
+  function offlineSong(){
+    showOffline();
   }
