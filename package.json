@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
-    "electron": "^9.0.5",
+    "electron": "^13.6.6",
     "fluent-ffmpeg": "^2.1.2",
     "get-youtube-playlist-id": "0.0.1",
     "jquery": "^3.5.1",
